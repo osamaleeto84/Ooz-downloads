@@ -1,0 +1,48 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/logo.png",
+      "destination": "/api/asset?f=logo"
+    },
+    {
+      "source": "/mascot.png",
+      "destination": "/api/asset?f=mascot"
+    },
+    {
+      "source": "/",
+      "destination": "/api/page"
+    },
+    {
+      "source": "/d/:slug",
+      "destination": "/api/dl?slug=:slug"
+    },
+    {
+      "source": "/img/:id",
+      "destination": "/api/img?id=:id"
+    },
+    {
+      "source": "/:slug([a-z0-9][a-z0-9-]{0,39})",
+      "destination": "/api/page?slug=:slug"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        }
+      ]
+    }
+  ]
+}

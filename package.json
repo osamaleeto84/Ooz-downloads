@@ -1,0 +1,15 @@
+{
+  "name": "ooz-downloads",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Ooz apps download pages and download counts (Vercel + Neon + GitHub Releases).",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "npm i --no-save @electric-sql/pglite && node tests/server.test.cjs"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.2.1"
+  }
+}
