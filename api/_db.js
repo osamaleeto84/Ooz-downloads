@@ -18,6 +18,7 @@ const SCHEMA = [
      created_at TIMESTAMPTZ NOT NULL DEFAULT now())`,
   `CREATE TABLE IF NOT EXISTS downloads (id BIGSERIAL PRIMARY KEY, app_id INT NOT NULL REFERENCES apps(id) ON DELETE CASCADE, version_id INT REFERENCES versions(id) ON DELETE SET NULL,
      at TIMESTAMPTZ NOT NULL DEFAULT now(), country TEXT NOT NULL DEFAULT '', device TEXT NOT NULL DEFAULT '')`,
+  `ALTER TABLE apps ADD COLUMN IF NOT EXISTS price_label TEXT NOT NULL DEFAULT 'مجاني'`,
   `CREATE INDEX IF NOT EXISTS downloads_app_at ON downloads (app_id, at)`,
   `CREATE INDEX IF NOT EXISTS versions_app ON versions (app_id)`,
 ];

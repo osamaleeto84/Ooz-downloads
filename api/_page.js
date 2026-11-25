@@ -84,9 +84,10 @@ function app(a, others, origin) {
   const android = a.platform !== 'windows', has = !!a.version_name;
   const feats = (a.features || []).filter(f => f && f.t);
   const shots = (a.shots || []).map(id => `<img src="/img/${+id}" alt="لقطة شاشة من ${esc(a.name)}" loading="lazy">`).join('');
-  const badges = ['مجاني', android ? 'أندرويد' : 'ويندوز', has ? `الإصدار <span dir="ltr">${esc(a.version_name)}</span>` : '', a.total > 0 ? `<span class="fn">${num(a.total)}</span>&nbsp;تحميل` : '']
+  const price = a.price_label == null ? 'مجاني' : String(a.price_label).trim(), free = price === 'مجاني';
+  const badges = [price ? esc(price) : '', android ? 'أندرويد' : 'ويندوز', has ? `الإصدار <span dir="ltr">${esc(a.version_name)}</span>` : '', a.total > 0 ? `<span class="fn">${num(a.total)}</span>&nbsp;تحميل` : '']
     .filter(Boolean).map(b => `<span>${b}</span>`).join('');
-  const btn = has ? `<a class="btn" href="/d/${esc(a.slug)}" rel="nofollow">${ic('dl')}<span>تحميل مجاناً</span>${a.size > 0 ? `<small dir="ltr">${mb(+a.size)}</small>` : ''}</a>`
+  const btn = has ? `<a class="btn" href="/d/${esc(a.slug)}" rel="nofollow">${ic('dl')}<span>${free ? 'تحميل مجاناً' : 'تحميل'}</span>${a.size > 0 ? `<small dir="ltr">${mb(+a.size)}</small>` : ''}</a>`
     : `<span class="btn off">قريباً</span>`;
   const body = `${top(true)}
 <section class="hero"><div class="main">
@@ -100,7 +101,7 @@ ${a.description ? `<section><h2>عن التطبيق</h2><div class="pre">${esc(a
 <div class="card"><b>طريقة التثبيت</b><ol class="steps">${STEPS[android ? 'android' : 'windows'].map((s, i) => `<li><i>${i + 1}</i><span>${s}</span></li>`).join('')}</ol></div></section>
 ${others.length ? `<section><h2>تطبيقات أخرى من Ooz apps</h2><div class="others">${others.map(o => `<a class="other" href="/${esc(o.slug)}"><div class="icon"><img src="${iconOf(o)}" alt=""></div><div style="min-width:0"><b dir="ltr">${esc(o.name)}</b><span>${esc(o.tagline)}</span></div></a>`).join('')}</div></section>` : ''}
 ${foot}`;
-  return shell({ title: a.name + ' — تحميل مجاني', desc: a.tagline || ('حمّل ' + a.name + ' مجاناً من Ooz apps'), image: origin + iconOf(a), url: origin + '/' + a.slug, body });
+  return shell({ title: a.name + (free ? ' — تحميل مجاني' : ' — تحميل'), desc: a.tagline || ('حمّل ' + a.name + (free ? ' مجاناً' : '') + ' من Ooz apps'), image: origin + iconOf(a), url: origin + '/' + a.slug, body });
 }
 function home(apps, origin) {
   const body = `${top(false)}<div class="homehero"><img src="/logo.png" alt="Ooz apps"><p>برامج وتطبيقات <span>لشغلك</span></p><span class="hint">للمحلات والمدارس والصيدليات وشركات الأدوية</span></div>

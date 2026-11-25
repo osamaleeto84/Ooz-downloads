@@ -23,7 +23,7 @@ async function series(days, where, params) {
 }
 function appOut(a) {
   return { id: a.id, slug: a.slug, name: a.name, tagline: a.tagline, description: a.description, features: a.features || [], platform: a.platform,
-    package: a.package, icon: a.icon_id ? '/img/' + a.icon_id : null, icon_id: a.icon_id, shots: a.shots || [], published: a.published, sort: a.sort };
+    package: a.package, icon: a.icon_id ? '/img/' + a.icon_id : null, icon_id: a.icon_id, shots: a.shots || [], published: a.published, sort: a.sort, price: a.price_label == null ? 'مجاني' : a.price_label };
 }
 const OPS = {
   async ping() {
@@ -62,14 +62,15 @@ const OPS = {
     const features = (Array.isArray(b.features) ? b.features : []).slice(0, 12).map(f => ({ t: str(f && f.t, 80), d: str(f && f.d, 240) })).filter(f => f.t);
     const shots = (Array.isArray(b.shots) ? b.shots : []).slice(0, 8).map(int).filter(n => n > 0);
     const platform = ['android', 'windows'].includes(b.platform) ? b.platform : 'android';
-    const vals = [slug, name, str(b.tagline, 140), str(b.description, 4000), JSON.stringify(features), platform, str(b.package, 120), b.icon_id ? int(b.icon_id) : null, JSON.stringify(shots), b.published !== false, int(b.sort)];
+    const price = b.price == null ? 'مجاني' : str(b.price, 40).trim();
+    const vals = [slug, name, str(b.tagline, 140), str(b.description, 4000), JSON.stringify(features), platform, str(b.package, 120), b.icon_id ? int(b.icon_id) : null, JSON.stringify(shots), b.published !== false, int(b.sort), price];
     try {
       if (orig) {
-        const r = await q(`UPDATE apps SET slug=$1, name=$2, tagline=$3, description=$4, features=$5::jsonb, platform=$6, package=$7, icon_id=$8, shots=$9::jsonb, published=$10, sort=$11 WHERE slug=$12 RETURNING *`, [...vals, orig]);
+        const r = await q(`UPDATE apps SET slug=$1, name=$2, tagline=$3, description=$4, features=$5::jsonb, platform=$6, package=$7, icon_id=$8, shots=$9::jsonb, published=$10, sort=$11, price_label=$12 WHERE slug=$13 RETURNING *`, [...vals, orig]);
         if (!r.length) throw Object.assign(new Error('not found'), { status: 404 });
         return { app: appOut(r[0]) };
       }
-      const r = await q(`INSERT INTO apps (slug, name, tagline, description, features, platform, package, icon_id, shots, published, sort) VALUES ($1,$2,$3,$4,$5::jsonb,$6,$7,$8,$9::jsonb,$10,$11) RETURNING *`, vals);
+      const r = await q(`INSERT INTO apps (slug, name, tagline, description, features, platform, package, icon_id, shots, published, sort, price_label) VALUES ($1,$2,$3,$4,$5::jsonb,$6,$7,$8,$9::jsonb,$10,$11,$12) RETURNING *`, vals);
       return { app: appOut(r[0]) };
     } catch (e) {
       if (String(e.code) === '23505' || /duplicate|unique/i.test(e.message)) throw Object.assign(new Error('هذا الرابط مستخدم لتطبيق آخر'), { status: 409 });
